@@ -12,9 +12,14 @@ zerops:
         - tegola
         - data/
         - config/
+    deploy:
+      readinessCheck:
+        httpGet:
+          path: /
+          port: 8080
     run:
       os: ubuntu
-      base: go@latest
+      base: ubuntu@24.04
       envVariables:
         DB_HOST: $postgis_hostname
         DB_PORT: $postgis_port
