@@ -1,0 +1,18 @@
+project:
+  name: recipe-tegola
+services:
+  - hostname: redis
+    priority: 2
+    type: keydb@6
+    mode: NON_HA
+  - hostname: postgis
+    priority: 2
+    type: postgresql@16
+    mode: NON_HA
+
+  - hostname: tegola
+    priority: 1
+    type: go@1.22
+    maxContainers: 1
+    buildFromGit: https://github.com/zeropsio/recipe-tegola
+    enableSubdomainAccess: true

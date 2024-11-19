@@ -7,8 +7,7 @@ Cache-Control = "s-maxage=3600"
 [cache]
 type = "redis"
 address = "${REDIS_HOST}"
-password = "${REDIS_PASSWORD}"
-ttl = 10
+ttl = 60
 max_zoom = 18
 ssl = "${TEGOLA_REDIS_SSL}"
 db = 1

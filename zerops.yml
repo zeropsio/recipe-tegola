@@ -1,0 +1,42 @@
+zerops:
+  - setup: tegola
+    build:
+      envVariables:
+        TEGOLA_VERSION: v0.20.0
+      buildCommands:
+        - wget https://github.com/go-spatial/tegola/releases/download/${TEGOLA_VERSION}/tegola_linux_amd64.zip
+        - unzip tegola_linux_amd64.zip
+        - chmod +x tegola
+        - tar -xzf data/bonn_example.tar.gz -C data && rm data/bonn_example.tar.gz
+      deployFiles:
+        - tegola
+        - data/
+        - config/
+    run:
+      os: ubuntu
+      base: go@latest
+      envVariables:
+        DB_HOST: $postgis_hostname
+        DB_PORT: $postgis_port
+        DB_USER: $postgis_user
+        DB_PASSWORD: $postgis_password
+        DB_NAME: bonn
+        TEGOLA_POSTGIS_SSL: disable
+        TEGOLA_REDIS_SSL: false
+        REDIS_HOST: redis:6379
+
+        TEGOLA_SQL_DEBUG: LAYER_SQL
+        LOG_LEVEL: INFO
+
+        # For migrations.
+        PGUSER: $postgis_superUser
+        PGPASSWORD: $postgis_superUserPassword
+      ports:
+        - port: 8080
+          httpSupport: true
+      prepareCommands:
+        - sudo apt-get update
+        - sudo apt-get install -y postgresql-client
+      initCommands:
+        - zsc execOnce "only-once" -- ./data/init.sh
+      start: ./tegola serve --config=config/config-mvt-postgis.toml --log-level $LOG_LEVEL
